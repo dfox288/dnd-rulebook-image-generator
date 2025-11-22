@@ -1,13 +1,17 @@
 import os
 import yaml
-from pathlib import Path
 from typing import Dict, Any
 
 
 def load_config(config_path: str = "config.yaml") -> Dict[str, Any]:
     """Load configuration from YAML file with environment variable substitution"""
-    with open(config_path, 'r') as f:
-        config = yaml.safe_load(f)
+    try:
+        with open(config_path, 'r') as f:
+            config = yaml.safe_load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Configuration file not found: {config_path}")
+    except yaml.YAMLError as e:
+        raise yaml.YAMLError(f"Failed to parse YAML configuration: {e}")
 
     # Substitute environment variables
     config = _substitute_env_vars(config)

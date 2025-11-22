@@ -33,7 +33,14 @@ def test_get_prompt_config_falls_back_to_default():
 
 def test_openai_api_key_from_env():
     """Test that API key is loaded from environment"""
-    os.environ["OPENAI_API_KEY"] = "test_key_123"
-    config = load_config()
+    original_key = os.environ.get("OPENAI_API_KEY")
+    try:
+        os.environ["OPENAI_API_KEY"] = "test_key_123"
+        config = load_config()
 
-    assert config["openai"]["api_key"] == "test_key_123"
+        assert config["openai"]["api_key"] == "test_key_123"
+    finally:
+        if original_key is not None:
+            os.environ["OPENAI_API_KEY"] = original_key
+        else:
+            os.environ.pop("OPENAI_API_KEY", None)
