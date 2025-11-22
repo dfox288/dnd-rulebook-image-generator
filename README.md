@@ -20,10 +20,20 @@ python src/cli.py --entity-type spells --limit 10
 python src/cli.py --entity-type items --dry-run
 ```
 
-## MCP Integration
+## MCP Server Setup
 
-Run the MCP server for Claude Code integration:
+Add to your Claude Code MCP settings:
 
-```bash
-python src/mcp_server.py
+```json
+{
+  "dnd-image-generator": {
+    "command": "python",
+    "args": ["/path/to/image-generator/src/mcp_server.py"]
+  }
+}
 ```
+
+Available commands:
+- `generate_image(entity_type, slug, custom_prompt?)` - Generate single image
+- `batch_generate(entity_type, limit?)` - Batch generate images
+- `list_generated(entity_type?)` - List generated images
