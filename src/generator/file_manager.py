@@ -16,6 +16,7 @@ class FileManager:
         self.config = config
         self.base_path = Path(config["base_path"])
         self.post_resize = config.get("post_resize")
+        self.timeout = config.get("timeout", 30)
         self.manifest_path = self.base_path / ".manifest.json"
 
         # Ensure base directory exists
@@ -43,7 +44,7 @@ class FileManager:
         entity_dir.mkdir(parents=True, exist_ok=True)
 
         # Download image
-        response = requests.get(image_url)
+        response = requests.get(image_url, timeout=self.timeout)
         response.raise_for_status()
 
         image_data = response.content
@@ -52,8 +53,13 @@ class FileManager:
         if self.post_resize:
             image_data = self._resize_image(image_data, self.post_resize)
 
+        # Sanitize slug to prevent path traversal
+        sanitized_slug = Path(slug).name
+        if sanitized_slug != slug:
+            raise ValueError(f"Invalid slug: {slug}. Slugs must not contain path components.")
+
         # Save to file
-        output_path = entity_dir / f"{slug}.png"
+        output_path = entity_dir / f"{sanitized_slug}.png"
         with open(output_path, 'wb') as f:
             f.write(image_data)
 
