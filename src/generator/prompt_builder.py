@@ -28,6 +28,8 @@ class PromptBuilder:
         if self.config.get("include_category", False):
             category = self._extract_category(entity)
             prefix = prefix.replace("{category}", category)
+            # Normalize whitespace to prevent double spaces when category is empty
+            prefix = re.sub(r'\s+', ' ', prefix)
 
         # Get flavor text
         if custom_text:
@@ -49,12 +51,8 @@ class PromptBuilder:
         # Primary source: description field
         description = entity.get("description", "")
 
-        # For spells, we might want to add higher_levels for context
-        if self.entity_type == "spells" and "higher_levels" in entity:
-            higher = entity["higher_levels"]
-            if higher:
-                # Just use description for now, higher_levels is too mechanical
-                pass
+        # TODO: Consider adding higher_levels text for spells if description is too short
+        # Currently only using description as higher_levels is too mechanical for image generation
 
         return description.strip()
 

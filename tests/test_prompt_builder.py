@@ -117,3 +117,24 @@ def test_extract_category_nested_field():
     category = builder._extract_category(entity)
 
     assert category == "Weapon"
+
+
+def test_build_prompt_with_empty_description():
+    """Test building prompt when entity has empty description"""
+    config = {
+        "prefix": "D&D item: ",
+        "suffix": ". Fantasy art.",
+        "include_category": False,
+        "max_length": 1000
+    }
+
+    entity = {
+        "name": "Unknown Item",
+        "description": ""
+    }
+
+    builder = PromptBuilder(config, "items")
+    prompt = builder.build(entity)
+
+    # Should still build a valid prompt with prefix and suffix
+    assert prompt == "D&D item: . Fantasy art."
