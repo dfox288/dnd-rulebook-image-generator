@@ -1,0 +1,53 @@
+api:
+  base_url: "http://localhost:8080/api/v1"
+  timeout: 30
+
+openai:
+  api_key: "${OPENAI_API_KEY}"
+  model: "dall-e-3"
+  size: "1024x1024"
+  quality: "standard"
+  style: "vivid"
+
+output:
+  base_path: "./output"
+  post_resize: 512
+
+prompts:
+  default:
+    prefix: "Fantasy art in D&D style: "
+    suffix: ". Digital art, dramatic lighting, detailed rendering."
+    max_length: 1000
+    include_category: false
+
+  spells:
+    prefix: "D&D {category} spell effect: "
+    suffix: ". Magical energy, spell casting scene, visual effects."
+    include_category: true
+    category_field: "school.name"
+
+  items:
+    prefix: "D&D {category} item: "
+    suffix: ". Product illustration, detailed object art, fantasy item."
+    include_category: true
+    category_field: "item_type.name"
+
+  classes:
+    prefix: "D&D character class portrait: "
+    suffix: ". Heroic pose, detailed armor and equipment, character concept art."
+    include_category: false
+
+  races:
+    prefix: "Fantasy race character portrait: "
+    suffix: ". Detailed facial features, cultural elements, character art."
+    include_category: false
+
+  backgrounds:
+    prefix: "D&D background scene: "
+    suffix: ". Environmental storytelling, occupation details, narrative scene."
+    include_category: false
+
+generation:
+  max_retries: 3
+  retry_delay: 5
+  batch_delay: 2
