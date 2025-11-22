@@ -2,49 +2,102 @@ api:
   base_url: "http://localhost:8080/api/v1"
   timeout: 30
 
-openai:
-  api_key: "${OPENAI_API_KEY}"
-  model: "dall-e-3"
-  size: "1024x1024"
-  quality: "standard"
-  style: "vivid"
+image_generation:
+  # Provider selection: "dall-e" or "stability-ai"
+  provider: "stability-ai"
+
+  # DALL-E configuration
+  dall-e:
+    api_key: "${OPENAI_API_KEY}"
+    model: "dall-e-3"
+    size: "1024x1024"
+    quality: "standard"
+    style: "vivid"
+    max_retries: 3
+    retry_delay: 5
+
+  # Stability.ai configuration
+  stability-ai:
+    api_key: "${STABILITY_API_KEY}"
+    model: "stable-diffusion-xl-1024-v1-0"
+    width: 1024
+    height: 1024
+    cfg_scale: 7
+    steps: 30
+    samples: 1
+    max_retries: 3
+    retry_delay: 5
+    # Comprehensive negative prompt
+    negative_prompt: "text, letters, numbers, captions, logos, signatures, watermarks, UI, HUD, interface, diagrams, sketches, rough lines, sharp outlines, thick lineart, comic style, harsh shadows, dramatic lighting, photographic realism, 3D rendering, clutter, props, hands, full-body, backgrounds with details, scenery, landscapes, noise, artifacts, distortion, mismatched proportions, inconsistent lighting, inconsistent color palette"
 
 output:
   base_path: "./output"
-  post_resize: 512
+  conversions:
+    enabled: true
+    sizes: [512, 256]
+    path: "./output/conversions"
 
 prompts:
+  # Master template for all entity types
+  template: |
+    A stylized painterly portrait of {entity_prefix} {entity}. {entityDescription}
+    Soft rounded shapes, unified brushstrokes, and warm diffuse lighting from the upper left.
+    Consistent color palette with muted warm tones and gentle desaturated shadows.
+    Smooth painterly texture with minimal linework.
+    Medium-close portrait framing (shoulders and head).
+    Centered composition with a circular soft-edged background shape in a single muted color.
+    No props, no scenery, no hands.
+    Final illustration only. Plain, minimal, painterly style.
+    Use the same painterly rendering style as all other portraits in this series.
+    Rendered in the gentle emberlight style.
+
   default:
-    prefix: "Fantasy art in D&D style: "
-    suffix: ". Digital art, dramatic lighting, detailed rendering."
+    entity_prefix: ""
     max_length: 1000
     include_category: false
 
   spells:
-    prefix: "D&D {category} spell effect: "
-    suffix: ". Magical energy, spell casting scene, visual effects."
+    entity_prefix: "a D&D {category} spell effect:"
     include_category: true
     category_field: "school.name"
+    # Custom template for spells (overrides default template)
+    template: |
+      A stylized painterly portrait of the spell: {entity_prefix} {entity}. {entityDescription}
+      Semi-realistic magical effect rendered with bold painterly brushstrokes and sculpted shapes of energy.
+      Warm directional lighting from the upper left interacting with the spell effect, with soft shadows and warm highlights.
+      Centered composition with the spell floating clearly against a painterly abstract background.
+      The background uses sweeping brush-strokes and arc-shaped motion similar to the character portraits for aesthetic consistency.
+      Smooth painterly blending, minimal linework, gently stylized magical glow where appropriate.
+      No runes, no circles, no UI, no hands, no casters, no props.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
 
   items:
-    prefix: "D&D {category} item: "
-    suffix: ". Product illustration, detailed object art, fantasy item."
+    entity_prefix: "a D&D {category} magical item:"
     include_category: true
     category_field: "item_type.name"
-
-  classes:
-    prefix: "D&D character class portrait: "
-    suffix: ". Heroic pose, detailed armor and equipment, character concept art."
-    include_category: false
+    # Custom template for items (overrides default template)
+    template: |
+      A stylized painterly portrait of the item: {entity_prefix} {entity}. {entityDescription}
+      Semi-realistic rendering with bold painterly brushstrokes and sculpted forms.
+      Warm directional lighting from the upper left, soft shadows, and a harmonized warm color palette.
+      Centered composition with the item floating or presented clearly against a painterly abstract background.
+      The background uses dynamic sweeping brush-strokes similar to the character portraits, creating a unified visual style.
+      Smooth blending with minimal linework and cohesive stylization.
+      No hands, no props, no scenery, no stand or display surface.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
 
   races:
-    prefix: "Fantasy race character portrait: "
-    suffix: ". Detailed facial features, cultural elements, character art."
+    entity_prefix: "a"
+    include_category: false
+
+  classes:
+    entity_prefix: "a D&D"
     include_category: false
 
   backgrounds:
-    prefix: "D&D background scene: "
-    suffix: ". Environmental storytelling, occupation details, narrative scene."
+    entity_prefix: "a D&D character with"
     include_category: false
 
 generation:

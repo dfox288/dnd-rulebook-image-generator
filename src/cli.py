@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from src.config import load_config, get_prompt_config
 from src.generator.api_client import DndApiClient
 from src.generator.prompt_builder import PromptBuilder
-from src.generator.image_generator import ImageGenerator
+from src.generator.providers.factory import create_provider
 from src.generator.file_manager import FileManager
 
 # Configure logging
@@ -57,15 +57,19 @@ def main():
     )
 
     prompt_config = get_prompt_config(config, args.entity_type)
-    prompt_builder = PromptBuilder(prompt_config, args.entity_type)
+    # Use entity-specific template if available, otherwise use global template
+    template = prompt_config.get("template") or config.get("prompts", {}).get("template", "")
+    prompt_builder = PromptBuilder(prompt_config, args.entity_type, template)
 
     file_manager = FileManager(config["output"])
 
     if not args.dry_run:
-        image_generator = ImageGenerator(
-            config["openai"],
-            config["generation"]
-        )
+        # Get provider type and config
+        provider_type = config["image_generation"]["provider"]
+        provider_config = config["image_generation"][provider_type]
+
+        logger.info(f"Using image provider: {provider_type}")
+        image_provider = create_provider(provider_type, provider_config)
 
     # Fetch entities
     logger.info(f"Fetching {args.entity_type}...")
@@ -112,10 +116,11 @@ def main():
                 continue
 
             # Generate image
-            image_url = image_generator.generate(prompt)
+            image_url = image_provider.generate(prompt)
 
-            # Save image
-            output_path = file_manager.save_image(image_url, args.entity_type, slug)
+            # Save image with provider name in filename
+            provider_name = image_provider.get_provider_name()
+            output_path = file_manager.save_image(image_url, args.entity_type, slug, provider_name)
 
             # Update manifest
             file_manager.update_manifest(args.entity_type, slug, output_path, True)

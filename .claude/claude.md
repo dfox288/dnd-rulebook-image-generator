@@ -8,9 +8,9 @@
 
 ## Quick Context
 
-This is a **complete, production-ready** image generation system that creates fantasy artwork for D&D entities using DALL-E 3. It features category-aware prompts (spell schools, item types), resumable batch generation, and Claude Code integration via MCP server.
+This is a **complete, production-ready** image generation system that creates fantasy artwork for D&D entities using AI image generation (DALL-E 3 or Stability.ai). It features multi-provider support, category-aware prompts (spell schools, item types), resumable batch generation, and Claude Code integration via MCP server.
 
-**Key Achievement**: Hybrid CLI/MCP architecture with 100% test coverage (23/23 tests passing).
+**Key Achievement**: Multi-provider architecture with hybrid CLI/MCP interface and 100% test coverage (23/23 tests passing).
 
 ---
 
@@ -25,8 +25,13 @@ This is a **complete, production-ready** image generation system that creates fa
 │   └── generator/                # Core generation modules
 │       ├── api_client.py         # D&D API client (pagination)
 │       ├── prompt_builder.py     # Category-aware prompts
-│       ├── image_generator.py    # DALL-E 3 integration
-│       └── file_manager.py       # Storage & manifest
+│       ├── image_generator.py    # Generation orchestrator
+│       ├── file_manager.py       # Storage & manifest
+│       └── providers/            # Multi-provider support
+│           ├── base.py           # Abstract provider interface
+│           ├── factory.py        # Provider factory
+│           ├── dalle_provider.py # DALL-E 3 implementation
+│           └── stability_provider.py # Stability.ai implementation
 ├── tests/                        # 23 passing tests
 │   ├── test_config.py
 │   ├── test_api_client.py
@@ -54,7 +59,7 @@ This is a **complete, production-ready** image generation system that creates fa
 1. **Fetches** D&D entities from `http://localhost:8080/api/v1/{entity_type}`
 2. **Extracts** flavor text from entity descriptions
 3. **Builds** category-aware prompts (e.g., "D&D Evocation spell effect: fireball...")
-4. **Generates** images via OpenAI DALL-E 3 API
+4. **Generates** images via AI provider (DALL-E 3 @ $0.04 or Stability.ai @ $0.01 per image)
 5. **Saves** to `output/{entityType}/{slug}.png`
 6. **Tracks** state in `.manifest.json` for resumability
 
@@ -71,7 +76,8 @@ source venv/bin/activate
 # Dry run (free, no API calls)
 python -m src.cli --entity-type spells --limit 5 --dry-run
 
-# Generate real images ($0.04 each)
+# Generate real images (cost depends on provider)
+# DALL-E: $0.04/image, Stability.ai: $0.01/image
 python -m src.cli --entity-type spells --limit 5
 
 # Generate specific entity
@@ -105,7 +111,14 @@ list_generated(entity_type="spells")
 
 ## 🔑 Key Features
 
-### 1. Category-Aware Prompts
+### 1. Multi-Provider Support
+Supports multiple AI image generation providers:
+- **DALL-E 3**: $0.04/image, reliable, good quality
+- **Stability.ai**: $0.01/image, faster, better negative prompts
+- Switch providers via `config.yaml` (`image_generation.provider`)
+- Each provider optimized with specific configurations
+
+### 2. Category-Aware Prompts
 Automatically includes entity categories in prompts:
 - **Spells**: School name (Evocation, Necromancy, etc.)
 - **Items**: Item type (Weapon, Wondrous Item, Armor, etc.)
@@ -120,19 +133,19 @@ with a low roar into an explosion of flame. Magical energy, spell
 casting scene, visual effects."
 ```
 
-### 2. Resumable Batch Generation
+### 3. Resumable Batch Generation
 - Manifest tracking in `output/.manifest.json`
 - Automatically skips already-generated images
 - Continues from where it left off if interrupted
 - Tracks success/failure status
 
-### 3. Robust Error Handling
-- Exponential backoff for DALL-E rate limits (3 retries)
+### 4. Robust Error Handling
+- Exponential backoff for rate limits (3 retries)
 - 30-second timeout on all HTTP requests
 - Path sanitization prevents directory traversal
 - Content policy violations logged and skipped
 
-### 4. Dual Interface
+### 5. Dual Interface
 - **CLI**: For automated batch generation
 - **MCP Server**: For manual control via Claude Code
 
@@ -147,16 +160,27 @@ casting scene, visual effects."
 - **Testing**: pytest 9.0.1 (23 tests, 100% passing)
 
 ### Architecture Patterns
+- **Factory Pattern**: Provider creation via `providers/factory.py`
+- **Strategy Pattern**: Swappable providers implementing common interface
 - **Dependency Injection**: All modules accept config dicts
 - **Iterator Pattern**: Memory-efficient pagination
 - **Builder Pattern**: Prompt construction
-- **Strategy Pattern**: Entity-specific prompt templates
 
-### DALL-E Configuration
+### Provider Configurations
+
+**DALL-E 3**:
 - Model: `dall-e-3`
 - Size: `1024x1024` (resized to `512x512`)
 - Quality: `standard` ($0.04/image)
 - Style: `vivid` (dramatic/fantasy)
+
+**Stability.ai**:
+- Model: `stable-diffusion-xl-1024-v1-0`
+- Size: `1024x1024`
+- CFG Scale: 7 (prompt adherence)
+- Steps: 30 (quality vs speed)
+- Cost: ~$0.01/image
+- Negative prompts: Prevents UI elements, grids, text
 
 ---
 
@@ -279,16 +303,16 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 
 ## 📊 Cost Estimation
 
-| Entity Type | Count | Cost (@$0.04) |
-|------------|-------|---------------|
-| Spells | 477 | $19.08 |
-| Items | 2,156 | $86.24 |
-| Races | 115 | $4.60 |
-| Classes | ~13 | $0.52 |
-| Backgrounds | 34 | $1.36 |
-| **Total** | **~2,795** | **~$111.80** |
+| Entity Type | Count | DALL-E 3 | Stability.ai |
+|------------|-------|----------|--------------|
+| Spells | 477 | $19.08 | $4.77 |
+| Items | 2,156 | $86.24 | $21.56 |
+| Races | 115 | $4.60 | $1.15 |
+| Classes | ~13 | $0.52 | $0.13 |
+| Backgrounds | 34 | $1.36 | $0.34 |
+| **Total** | **~2,795** | **~$111.80** | **~$27.95** |
 
-**Recommendation**: Always start with `--dry-run` and `--limit` for testing.
+**Recommendation**: Always start with `--dry-run` and `--limit` for testing. Stability.ai is ~75% cheaper!
 
 ---
 
@@ -312,8 +336,9 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 ## 📚 Documentation Files
 
 - **README.md** - User-facing documentation with complete usage guide
+- **HANDOVER.md** - Quick start guide for next developer
 - **IMPLEMENTATION_SUMMARY.md** - Technical details, architecture, test results
-- **NEXT_AGENT_INSTRUCTIONS.md** - Quick start guide for next agent/user
+- **PROVIDERS.md** - Provider comparison and configuration guide
 - **docs/plans/2025-11-22-dnd-image-generator-design.md** - Original design document
 - **docs/plans/2025-11-22-implementation-plan.md** - Detailed implementation plan
 

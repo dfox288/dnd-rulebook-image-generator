@@ -3,15 +3,16 @@ import re
 
 
 class PromptBuilder:
-    """Builds DALL-E prompts from entity data and configuration"""
+    """Builds DALL-E prompts from entity data and configuration using template system"""
 
-    def __init__(self, config: Dict[str, Any], entity_type: str):
+    def __init__(self, config: Dict[str, Any], entity_type: str, template: str = ""):
         self.config = config
         self.entity_type = entity_type
+        self.template = template
 
     def build(self, entity: Dict[str, Any], custom_text: Optional[str] = None) -> str:
         """
-        Build a prompt for DALL-E from entity data
+        Build a prompt for DALL-E from entity data using template
 
         Args:
             entity: Entity data from API
@@ -20,25 +21,38 @@ class PromptBuilder:
         Returns:
             Formatted prompt string
         """
-        prefix = self.config.get("prefix", "")
-        suffix = self.config.get("suffix", "")
         max_length = self.config.get("max_length", 1000)
+
+        # Get entity name
+        entity_name = entity.get("name", "")
+
+        # Get entity prefix (e.g., "a", "a D&D Evocation spell effect:")
+        entity_prefix = self.config.get("entity_prefix", "")
 
         # Extract category if configured
         if self.config.get("include_category", False):
             category = self._extract_category(entity)
-            prefix = prefix.replace("{category}", category)
+            entity_prefix = entity_prefix.replace("{category}", category)
             # Normalize whitespace to prevent double spaces when category is empty
-            prefix = re.sub(r'\s+', ' ', prefix)
+            entity_prefix = re.sub(r'\s+', ' ', entity_prefix).strip()
 
-        # Get flavor text
+        # Get description text
         if custom_text:
-            flavor_text = custom_text
+            entity_description = custom_text
         else:
-            flavor_text = self._extract_flavor_text(entity)
+            entity_description = self._extract_flavor_text(entity)
 
-        # Assemble prompt
-        prompt = f"{prefix}{flavor_text}{suffix}"
+        # Filter out bad/confusing descriptions
+        entity_description = self._clean_description(entity_description)
+
+        # Build prompt from template
+        if self.template:
+            prompt = self.template.replace("{entity_prefix}", entity_prefix)
+            prompt = prompt.replace("{entity}", entity_name)
+            prompt = prompt.replace("{entityDescription}", entity_description)
+        else:
+            # Fallback to simple concatenation if no template
+            prompt = f"{entity_prefix} {entity_name}. {entity_description}"
 
         # Truncate if needed
         if len(prompt) > max_length:
@@ -55,6 +69,42 @@ class PromptBuilder:
         # Currently only using description as higher_levels is too mechanical for image generation
 
         return description.strip()
+
+    def _clean_description(self, description: str) -> str:
+        """
+        Clean and filter descriptions that might confuse DALL-E
+
+        Removes:
+        - "NO DESCRIPTION" placeholder text
+        - "Source:" attribution lines
+        - Very short/empty descriptions
+
+        Returns empty string if description is invalid/confusing
+        """
+        if not description:
+            return ""
+
+        # Remove "NO DESCRIPTION" placeholder
+        if description.upper() == "NO DESCRIPTION":
+            return ""
+
+        # Remove "Source:" lines from item descriptions
+        lines = description.split('\n')
+        cleaned_lines = []
+        for line in lines:
+            line = line.strip()
+            # Skip source attribution lines
+            if line.startswith("Source:") or line.startswith("source:"):
+                continue
+            cleaned_lines.append(line)
+
+        cleaned = ' '.join(cleaned_lines).strip()
+
+        # If description is too short (< 20 chars), it's probably not useful
+        if len(cleaned) < 20:
+            return ""
+
+        return cleaned
 
     def _extract_category(self, entity: Dict[str, Any]) -> str:
         """Extract category value from nested field path"""

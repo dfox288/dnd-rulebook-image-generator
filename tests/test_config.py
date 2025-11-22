@@ -18,7 +18,7 @@ def test_get_prompt_config_returns_entity_specific():
     spell_prompts = get_prompt_config(config, "spells")
 
     assert spell_prompts["include_category"] is True
-    assert "{category}" in spell_prompts["prefix"]
+    assert "{category}" in spell_prompts["entity_prefix"]
     assert spell_prompts["category_field"] == "school.name"
 
 
@@ -28,7 +28,7 @@ def test_get_prompt_config_falls_back_to_default():
     unknown_prompts = get_prompt_config(config, "unknown_type")
 
     assert unknown_prompts["include_category"] is False
-    assert "Fantasy art in D&D style" in unknown_prompts["prefix"]
+    assert "entity_prefix" in unknown_prompts
 
 
 def test_openai_api_key_from_env():

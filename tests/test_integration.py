@@ -58,12 +58,12 @@ def test_end_to_end_spell_generation(mock_requests_get, mock_openai):
             "api": {"base_url": "http://localhost:8080/api/v1", "timeout": 30},
             "openai": {"api_key": "test_key", "model": "dall-e-3",
                       "size": "1024x1024", "quality": "standard", "style": "vivid"},
-            "output": {"base_path": tmpdir, "post_resize": None},
+            "output": {"base_path": tmpdir},
             "generation": {"max_retries": 3, "retry_delay": 0.1},
             "prompts": {
+                "template": "Illustration of {entity_prefix} {entity}. {entityDescription}",
                 "spells": {
-                    "prefix": "D&D {category} spell: ",
-                    "suffix": ".",
+                    "entity_prefix": "a D&D {category} spell effect:",
                     "include_category": True,
                     "category_field": "school.name",
                     "max_length": 1000
@@ -73,7 +73,8 @@ def test_end_to_end_spell_generation(mock_requests_get, mock_openai):
 
         # Initialize components
         api_client = DndApiClient(config["api"]["base_url"], config["api"]["timeout"])
-        prompt_builder = PromptBuilder(config["prompts"]["spells"], "spells")
+        template = config["prompts"]["template"]
+        prompt_builder = PromptBuilder(config["prompts"]["spells"], "spells", template)
         image_generator = ImageGenerator(config["openai"], config["generation"])
         file_manager = FileManager(config["output"])
 

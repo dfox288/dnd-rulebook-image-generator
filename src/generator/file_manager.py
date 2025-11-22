@@ -1,5 +1,6 @@
 import json
 import requests
+import base64
 from pathlib import Path
 from typing import Dict, Any, Optional
 from PIL import Image
@@ -15,57 +16,104 @@ class FileManager:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
         self.base_path = Path(config["base_path"])
-        self.post_resize = config.get("post_resize")
         self.timeout = config.get("timeout", 30)
         self.manifest_path = self.base_path / ".manifest.json"
 
+        # Conversion settings
+        self.conversions = config.get("conversions", {})
+        self.conversions_enabled = self.conversions.get("enabled", False)
+        self.conversion_sizes = self.conversions.get("sizes", [])
+        self.conversions_path = Path(self.conversions.get("path", "./output/conversions"))
+
         # Ensure base directory exists
         self.base_path.mkdir(parents=True, exist_ok=True)
+
+        # Ensure conversions directory exists if enabled
+        if self.conversions_enabled:
+            self.conversions_path.mkdir(parents=True, exist_ok=True)
 
     def save_image(
         self,
         image_url: str,
         entity_type: str,
-        slug: str
+        slug: str,
+        provider_name: str = "unknown"
     ) -> str:
         """
-        Download and save image to entity_type/slug.png
+        Download and save image to entity_type/provider_name/slug.png
 
         Args:
             image_url: URL of image to download
             entity_type: Entity type (spells, items, etc.)
             slug: Entity slug for filename
+            provider_name: Name of the image generation provider
 
         Returns:
             Path to saved image
         """
-        # Create entity type directory
-        entity_dir = self.base_path / entity_type
-        entity_dir.mkdir(parents=True, exist_ok=True)
+        # Create provider-specific directory: entity_type/provider_name/
+        provider_dir = self.base_path / entity_type / provider_name
+        provider_dir.mkdir(parents=True, exist_ok=True)
 
-        # Download image
-        response = requests.get(image_url, timeout=self.timeout)
-        response.raise_for_status()
-
-        image_data = response.content
-
-        # Resize if configured
-        if self.post_resize:
-            image_data = self._resize_image(image_data, self.post_resize)
+        # Download or decode image
+        if image_url.startswith("data:image"):
+            # Handle data URL (from Stability.ai)
+            # Format: data:image/png;base64,<base64_string>
+            header, base64_data = image_url.split(',', 1)
+            image_data = base64.b64decode(base64_data)
+        else:
+            # Handle regular HTTP URL (from DALL-E)
+            response = requests.get(image_url, timeout=self.timeout)
+            response.raise_for_status()
+            image_data = response.content
 
         # Sanitize slug to prevent path traversal
         sanitized_slug = Path(slug).name
         if sanitized_slug != slug:
             raise ValueError(f"Invalid slug: {slug}. Slugs must not contain path components.")
 
-        # Save to file
-        output_path = entity_dir / f"{sanitized_slug}.png"
+        # Clean filename: just slug.png
+        filename = f"{sanitized_slug}.png"
+
+        # Save original image (no resize)
+        output_path = provider_dir / filename
         with open(output_path, 'wb') as f:
             f.write(image_data)
 
         logger.info(f"Saved image to {output_path}")
 
+        # Generate conversions if enabled
+        if self.conversions_enabled and self.conversion_sizes:
+            self._generate_conversions(image_data, entity_type, sanitized_slug, provider_name)
+
         return str(output_path)
+
+    def _generate_conversions(self, image_data: bytes, entity_type: str, slug: str, provider_name: str = "unknown"):
+        """
+        Generate resized conversions of the image
+
+        Args:
+            image_data: Original image data
+            entity_type: Entity type for subdirectory
+            slug: Entity slug for filename
+            provider_name: Name of the provider for subdirectory
+        """
+        img = Image.open(io.BytesIO(image_data))
+
+        for size in self.conversion_sizes:
+            # Create provider-specific directory: conversions/size/entity_type/provider_name/
+            provider_dir = self.conversions_path / str(size) / entity_type / provider_name
+            provider_dir.mkdir(parents=True, exist_ok=True)
+
+            # Resize image
+            resized_img = img.resize((size, size), Image.Resampling.LANCZOS)
+
+            # Save to conversion directory with clean filename
+            filename = f"{slug}.png"
+            conversion_path = provider_dir / filename
+            resized_img.save(conversion_path, format='PNG')
+
+            logger.info(f"Generated {size}x{size} conversion: {conversion_path}")
 
     def _resize_image(self, image_data: bytes, target_size: int) -> bytes:
         """Resize image to target_size x target_size"""

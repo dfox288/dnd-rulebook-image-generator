@@ -25,10 +25,17 @@ def test_save_image_creates_directory():
             assert "spells/fireball.png" in path
 
 
-def test_save_image_with_resize():
-    """Test that images are resized when configured"""
+def test_save_image_with_conversions():
+    """Test that conversions are generated when configured"""
     with tempfile.TemporaryDirectory() as tmpdir:
-        config = {"base_path": tmpdir, "post_resize": 512}
+        config = {
+            "base_path": tmpdir,
+            "conversions": {
+                "enabled": True,
+                "sizes": [512, 256],
+                "path": f"{tmpdir}/conversions"
+            }
+        }
         manager = FileManager(config)
 
         with patch('src.generator.file_manager.requests.get') as mock_get:
@@ -42,11 +49,18 @@ def test_save_image_with_resize():
                 mock_img.size = (1024, 1024)
                 mock_open.return_value = mock_img
 
+                # Mock the resized images
+                mock_resized = Mock()
+                mock_img.resize.return_value = mock_resized
+
                 path = manager.save_image("https://example.com/img.png", "items", "longsword")
 
-                # Verify resize was called (with resampling parameter)
+                # Verify resize was called for both conversion sizes
                 from PIL import Image as PILImage
-                mock_img.resize.assert_called_once_with((512, 512), PILImage.Resampling.LANCZOS)
+                assert mock_img.resize.call_count == 2
+
+                # Verify save was called for both conversions
+                assert mock_resized.save.call_count == 2
 
 
 def test_update_manifest():
