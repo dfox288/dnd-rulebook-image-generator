@@ -101,7 +101,30 @@ def main():
 
     for idx, entity in enumerate(entities, 1):
         # Try slug first, then code, then name as fallback for slug-less entities
-        slug = entity.get('slug') or entity.get('code') or entity.get('name', '').lower().replace(' ', '-')
+        slug = entity.get('slug') or entity.get('code')
+
+        # If no slug or code, slugify the name
+        if not slug:
+            name_raw = entity.get('name', '')
+            if name_raw:
+                # Simple slugification: lowercase, replace spaces/special chars with hyphens
+                import re
+                slug = re.sub(r'[^\w\s-]', '', name_raw).strip().lower()
+                slug = re.sub(r'[-\s]+', '-', slug)
+
+        # Validate identifier before processing
+        if not slug or slug == "null":
+            logger.warning(f"[{idx}/{len(entities)}] Skipping entity with invalid identifier: {entity}")
+            error_count += 1
+            file_manager.update_manifest(
+                args.entity_type,
+                str(entity.get('id', 'unknown')),
+                "",
+                False,
+                f"Invalid identifier: slug='{slug}', code='{entity.get('code')}', name='{entity.get('name')}'"
+            )
+            continue
+
         name = entity.get('name', slug)
 
         logger.info(f"[{idx}/{len(entities)}] Processing: {name} ({slug})")

@@ -19,10 +19,10 @@ def test_save_image_creates_directory():
             mock_response.content = b"fake_image_data"
             mock_get.return_value = mock_response
 
-            path = manager.save_image("https://example.com/img.png", "spells", "fireball")
+            path = manager.save_image("https://example.com/img.png", "spells", "fireball", "test-provider")
 
             assert Path(path).exists()
-            assert "spells/fireball.png" in path
+            assert "spells/test-provider/fireball.png" in path
 
 
 def test_save_image_with_conversions():
@@ -111,3 +111,43 @@ def test_get_generated_count():
         assert manager.get_generated_count("spells") == 2
         assert manager.get_generated_count("items") == 1
         assert manager.get_generated_count() == 3
+
+
+def test_save_image_rejects_null_slug():
+    """Test that save_image raises ValueError for null/None slugs"""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config = {"base_path": tmpdir, "post_resize": None}
+        manager = FileManager(config)
+
+        with patch('src.generator.file_manager.requests.get') as mock_get:
+            mock_response = Mock()
+            mock_response.content = b"fake_image_data"
+            mock_get.return_value = mock_response
+
+            # Test None slug
+            with pytest.raises(ValueError, match="invalid slug 'None'"):
+                manager.save_image("https://example.com/img.png", "sizes", None)
+
+            # Test "null" string slug
+            with pytest.raises(ValueError, match="invalid slug 'null'"):
+                manager.save_image("https://example.com/img.png", "sizes", "null")
+
+            # Test empty string slug
+            with pytest.raises(ValueError, match="invalid slug ''"):
+                manager.save_image("https://example.com/img.png", "sizes", "")
+
+
+def test_save_image_rejects_path_traversal():
+    """Test that save_image prevents path traversal attacks"""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config = {"base_path": tmpdir, "post_resize": None}
+        manager = FileManager(config)
+
+        with patch('src.generator.file_manager.requests.get') as mock_get:
+            mock_response = Mock()
+            mock_response.content = b"fake_image_data"
+            mock_get.return_value = mock_response
+
+            # Test path traversal attempt
+            with pytest.raises(ValueError, match="must not contain path components"):
+                manager.save_image("https://example.com/img.png", "spells", "../../../etc/passwd")

@@ -95,9 +95,9 @@ def test_end_to_end_spell_generation(mock_requests_get, mock_openai):
         assert image_url == "https://example.com/image.png"
 
         # Save image
-        output_path = file_manager.save_image(image_url, "spells", "fireball")
+        output_path = file_manager.save_image(image_url, "spells", "fireball", "test-provider")
         assert Path(output_path).exists()
-        assert "spells/fireball.png" in output_path
+        assert "spells/test-provider/fireball.png" in output_path
 
         # Update manifest (as the CLI/MCP would)
         file_manager.update_manifest("spells", "fireball", output_path, True)

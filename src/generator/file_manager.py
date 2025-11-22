@@ -50,7 +50,17 @@ class FileManager:
 
         Returns:
             Path to saved image
+
+        Raises:
+            ValueError: If slug is None, empty, or invalid
         """
+        # Validate slug is not None/null/empty
+        if not slug or slug == "null":
+            raise ValueError(
+                f"Cannot save image for {entity_type}: "
+                f"invalid slug '{slug}'. Entity identifier is required."
+            )
+
         # Create provider-specific directory: entity_type/provider_name/
         provider_dir = self.base_path / entity_type / provider_name
         provider_dir.mkdir(parents=True, exist_ok=True)
