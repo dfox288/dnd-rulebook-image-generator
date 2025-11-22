@@ -100,6 +100,76 @@ prompts:
     entity_prefix: "a D&D character with"
     include_category: false
 
+  monsters:
+    entity_prefix: "a D&D"
+    include_category: false
+
+  feats:
+    entity_prefix: "a character demonstrating the"
+    include_category: false
+    template: |
+      A stylized painterly portrait showing the feat: {entity_prefix} {entity}. {entityDescription}
+      Dynamic action pose or symbolic representation rendered with bold painterly brushstrokes.
+      Warm directional lighting from the upper left, emphasizing motion or power.
+      Centered composition against a painterly abstract background with sweeping brush-strokes.
+      Smooth painterly blending, minimal linework, cohesive stylization.
+      No text, no UI, no multiple figures, no scenery.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  item_types:
+    entity_prefix: "a generic D&D"
+    include_category: false
+    template: |
+      A stylized painterly icon representing the item category: {entity_prefix} {entity}. {entityDescription}
+      Generic symbolic representation rendered with bold painterly brushstrokes.
+      Warm directional lighting from the upper left, soft shadows.
+      Centered composition with the icon clearly presented against a painterly abstract background.
+      Smooth blending with minimal linework.
+      No hands, no props, no scenery, no specific items.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  languages:
+    entity_prefix: "the"
+    include_category: false
+    template: |
+      A stylized painterly portrait representing the language: {entity_prefix} {entity}. {entityDescription}
+      Abstract cultural motifs, script fragments, or symbolic representation rendered with painterly brushstrokes.
+      Warm diffuse lighting, harmonized color palette suggesting cultural origin.
+      Centered composition against a painterly abstract background.
+      Smooth painterly texture, minimal linework, elegant and mysterious.
+      No actual readable text, no UI, no hands, no people.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  sizes:
+    entity_prefix: "a"
+    include_category: false
+    template: |
+      A stylized painterly icon showing the concept of size: {entity_prefix} {entity}. {entityDescription}
+      Abstract geometric representation or scale comparison rendered with painterly brushstrokes.
+      Warm lighting, simple composition, clear symbolic meaning.
+      Centered against a painterly abstract background.
+      Smooth blending, minimal detail, easily understood at a glance.
+      No creatures, no specific objects, no UI, no measurements.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  spell_schools:
+    entity_prefix: "the magical school of"
+    include_category: false
+    template: |
+      A stylized painterly portrait representing the magic school: {entity_prefix} {entity}. {entityDescription}
+      Abstract magical energy or symbolic representation of the school's essence rendered with bold painterly brushstrokes.
+      Warm directional lighting from the upper left interacting with magical elements.
+      Centered composition with the magical essence floating against a painterly abstract background.
+      Color palette and energy style should evoke the school's nature (e.g., fire for Evocation, shadow for Necromancy).
+      Smooth painterly blending, minimal linework, mystical and cohesive.
+      No runes, no circles, no UI, no hands, no casters.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
 generation:
   max_retries: 3
   retry_delay: 5

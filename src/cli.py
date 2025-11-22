@@ -31,7 +31,8 @@ def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description='Generate D&D entity images using DALL-E')
     parser.add_argument('--entity-type', required=True,
-                       choices=['spells', 'items', 'classes', 'races', 'backgrounds'],
+                       choices=['spells', 'items', 'classes', 'races', 'backgrounds',
+                               'monsters', 'feats', 'item_types', 'languages', 'sizes', 'spell_schools'],
                        help='Type of entity to generate images for')
     parser.add_argument('--limit', type=int, help='Limit number of entities to process')
     parser.add_argument('--slug', help='Generate image for specific entity slug')
@@ -71,18 +72,21 @@ def main():
         logger.info(f"Using image provider: {provider_type}")
         image_provider = create_provider(provider_type, provider_config)
 
+    # Convert entity_type underscores to hyphens for API endpoint
+    api_entity_type = args.entity_type.replace('_', '-')
+
     # Fetch entities
     logger.info(f"Fetching {args.entity_type}...")
 
     if args.slug:
         # Fetch all and filter by slug (API doesn't support direct slug lookup)
-        entities = [e for e in api_client.fetch_entities(args.entity_type, limit=1000)
-                   if e.get('slug') == args.slug]
+        entities = [e for e in api_client.fetch_entities(api_entity_type, limit=1000)
+                   if e.get('slug') == args.slug or e.get('code') == args.slug]
         if not entities:
             logger.error(f"Entity with slug '{args.slug}' not found")
             sys.exit(1)
     else:
-        entities = list(api_client.fetch_entities(args.entity_type, limit=args.limit))
+        entities = list(api_client.fetch_entities(api_entity_type, limit=args.limit))
 
     logger.info(f"Found {len(entities)} entities")
 
@@ -94,7 +98,8 @@ def main():
     batch_delay = config["generation"].get("batch_delay", 2)
 
     for idx, entity in enumerate(entities, 1):
-        slug = entity.get('slug')
+        # Try slug first, then code, then name as fallback for slug-less entities
+        slug = entity.get('slug') or entity.get('code') or entity.get('name', '').lower().replace(' ', '-')
         name = entity.get('name', slug)
 
         logger.info(f"[{idx}/{len(entities)}] Processing: {name} ({slug})")

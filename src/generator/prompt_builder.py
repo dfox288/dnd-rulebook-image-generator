@@ -63,7 +63,7 @@ class PromptBuilder:
     def _extract_flavor_text(self, entity: Dict[str, Any]) -> str:
         """Extract descriptive flavor text from entity"""
         # Primary source: description field
-        description = entity.get("description", "")
+        description = entity.get("description") or ""
 
         # TODO: Consider adding higher_levels text for spells if description is too short
         # Currently only using description as higher_levels is too mechanical for image generation

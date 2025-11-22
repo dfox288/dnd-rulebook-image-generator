@@ -44,7 +44,13 @@ This is a **complete, production-ready** image generation system that creates fa
 │   ├── items/
 │   ├── classes/
 │   ├── races/
-│   └── backgrounds/
+│   ├── backgrounds/
+│   ├── monsters/
+│   ├── feats/
+│   ├── item_types/
+│   ├── languages/
+│   ├── sizes/
+│   └── spell_schools/
 ├── docs/plans/                   # Design & implementation docs
 ├── config.yaml                   # Full configuration
 ├── .env.example                  # Environment template
@@ -310,7 +316,13 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 | Races | 115 | $4.60 | $1.15 |
 | Classes | ~13 | $0.52 | $0.13 |
 | Backgrounds | 34 | $1.36 | $0.34 |
-| **Total** | **~2,795** | **~$111.80** | **~$27.95** |
+| Monsters | TBD | TBD | TBD |
+| Feats | TBD | TBD | TBD |
+| Item Types | TBD | TBD | TBD |
+| Languages | TBD | TBD | TBD |
+| Sizes | TBD | TBD | TBD |
+| Spell Schools | TBD | TBD | TBD |
+| **Total (Original)** | **~2,795** | **~$111.80** | **~$27.95** |
 
 **Recommendation**: Always start with `--dry-run` and `--limit` for testing. Stability.ai is ~75% cheaper!
 
@@ -365,22 +377,27 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 
 ### Adding New Entity Type
 
+**Note**: The system now supports 11 entity types (spells, items, classes, races, backgrounds, monsters, feats, item_types, languages, sizes, spell_schools). To add more:
+
 1. Add prompt config to `config.yaml`:
 ```yaml
 prompts:
-  monsters:
-    prefix: "D&D monster: "
-    suffix: ". Creature illustration, detailed."
+  new_entity_type:
+    entity_prefix: "a D&D"
+    include_category: false
+    # Optional: custom template (otherwise uses default)
+    template: |
+      Custom template here...
 ```
 
 2. Update CLI choices in `src/cli.py`:
 ```python
-choices=['spells', 'items', 'classes', 'races', 'backgrounds', 'monsters']
+choices=['spells', 'items', ..., 'new_entity_type']
 ```
 
 3. Create output directory:
 ```bash
-mkdir -p output/monsters
+mkdir -p output/new_entity_type
 ```
 
 ### Modifying Prompts
