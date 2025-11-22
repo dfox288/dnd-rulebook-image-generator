@@ -170,6 +170,97 @@ prompts:
       Final illustration only.
       Rendered in the Emberstroke portrait style.
 
+  ability_scores:
+    entity_prefix: "the ability score of"
+    include_category: false
+    template: |
+      A stylized painterly icon representing the ability score: {entity_prefix} {entity}. {entityDescription}
+      Abstract symbolic representation of the core D&D ability rendered with painterly brushstrokes.
+      Warm lighting, strong composition conveying the ability's nature (strength, intelligence, etc.).
+      Centered against a painterly abstract background.
+      Smooth blending, iconic and easily recognizable.
+      No text, no UI, no people, no equipment.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  conditions:
+    entity_prefix: "the"
+    include_category: false
+    template: |
+      A stylized painterly portrait representing the condition: {entity_prefix} {entity}. {entityDescription}
+      Visual representation of the condition's effects rendered with painterly brushstrokes.
+      Atmospheric lighting and color palette that evokes the condition's nature.
+      Centered composition against a painterly abstract background.
+      Smooth painterly texture, dramatic but cohesive.
+      No text, no UI, no specific characters.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  damage_types:
+    entity_prefix: "the damage type:"
+    include_category: false
+    template: |
+      A stylized painterly icon representing the damage type: {entity_prefix} {entity}. {entityDescription}
+      Abstract representation of the damage energy or effect rendered with bold painterly brushstrokes.
+      Color palette and energy style specific to the damage type (fire, cold, poison, etc.).
+      Centered composition with the energy clearly presented against a painterly abstract background.
+      Smooth painterly blending, dramatic and impactful.
+      No weapons, no creatures, no UI, no text.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  item_properties:
+    entity_prefix: "the weapon property:"
+    include_category: false
+    template: |
+      A stylized painterly icon representing the weapon property: {entity_prefix} {entity}. {entityDescription}
+      Abstract symbolic representation of the property rendered with painterly brushstrokes.
+      Warm directional lighting, clear symbolic meaning.
+      Centered against a painterly abstract background.
+      Smooth blending, easily understood visual metaphor.
+      No specific weapons, no hands, no UI, no text.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  proficiency_types:
+    entity_prefix: "proficiency in"
+    include_category: false
+    template: |
+      A stylized painterly icon representing proficiency: {entity_prefix} {entity}. {entityDescription}
+      Abstract symbolic representation rendered with painterly brushstrokes.
+      Warm lighting, clear composition.
+      Centered against a painterly abstract background.
+      Smooth blending, iconic representation.
+      No specific items, no people, no UI, no text.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  skills:
+    entity_prefix: "the skill:"
+    include_category: false
+    template: |
+      A stylized painterly portrait representing the skill: {entity_prefix} {entity}. {entityDescription}
+      Dynamic representation of someone using the skill rendered with painterly brushstrokes.
+      Warm directional lighting emphasizing action or expertise.
+      Centered composition against a painterly abstract background.
+      Smooth painterly blending, conveys the skill's nature.
+      No text, no UI, no multiple figures.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
+  sources:
+    entity_prefix: "the D&D sourcebook:"
+    include_category: false
+    template: |
+      A stylized painterly icon representing the sourcebook: {entity_prefix} {entity}. {entityDescription}
+      Abstract thematic representation of the book's content rendered with painterly brushstrokes.
+      Warm lighting, evocative of the book's theme and setting.
+      Centered composition against a painterly abstract background.
+      Smooth blending, mysterious and inviting.
+      No actual books, no text, no UI, no people.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
 generation:
   max_retries: 3
   retry_delay: 5

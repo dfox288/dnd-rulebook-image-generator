@@ -32,7 +32,9 @@ def main():
     parser = argparse.ArgumentParser(description='Generate D&D entity images using DALL-E')
     parser.add_argument('--entity-type', required=True,
                        choices=['spells', 'items', 'classes', 'races', 'backgrounds',
-                               'monsters', 'feats', 'item_types', 'languages', 'sizes', 'spell_schools'],
+                               'monsters', 'feats', 'item_types', 'languages', 'sizes', 'spell_schools',
+                               'ability_scores', 'conditions', 'damage_types', 'item_properties',
+                               'proficiency_types', 'skills', 'sources'],
                        help='Type of entity to generate images for')
     parser.add_argument('--limit', type=int, help='Limit number of entities to process')
     parser.add_argument('--slug', help='Generate image for specific entity slug')
