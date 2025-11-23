@@ -1,22 +1,28 @@
 # D&D Image Generator
 
-Generate fantasy artwork for D&D entities using DALL-E 3 with category-aware prompts.
+Generate fantasy artwork for D&D entities using AI image generation (DALL-E 3 or Stability.ai) with category-aware prompts.
+
+**Status:** ✅ Complete - 3,803 images generated across 11 entity types
 
 ## Features
 
 - 🎨 Category-aware prompts (spell schools, item types)
+- 🤖 Multi-provider support (DALL-E 3, Stability.ai)
 - 📦 Batch generation with resumable state
 - 🔧 MCP integration for Claude Code
 - 💾 Organized output structure (`output/{entityType}/{slug}.png`)
 - 🔄 Retry logic and rate limiting
 - 📊 Manifest tracking of generated images
+- 🖼️ Multiple size conversions (1024x1024, 512x512, 256x256)
 
 ## Setup
 
 ### Prerequisites
 
 - Python 3.11+
-- OpenAI API key
+- API key for your chosen provider:
+  - OpenAI API key (for DALL-E 3)
+  - Stability.ai API key (for Stable Diffusion)
 
 ### Installation
 
@@ -117,14 +123,35 @@ python -m pytest tests/test_config.py -v
 python -m pytest tests/ --cov=src --cov-report=html
 ```
 
+## Generated Image Compendium
+
+**Complete Collection: 3,803 images**
+
+| Entity Type | Images Generated | API Coverage |
+|-------------|------------------|--------------|
+| classes | 209 | ✅ 100% (131 in API) |
+| races | 131 | ✅ 100% (67 in API) |
+| spells | 477 | ✅ 100% |
+| items | 2,156 | ✅ 100% |
+| backgrounds | 34 | ✅ 100% |
+| monsters | 598 | ✅ 100% |
+| feats | 138 | ✅ 100% |
+| languages | 30 | ✅ 100% |
+| sizes | 6 | ✅ 100% |
+| item_types | 16 | ✅ Complete |
+| spell_schools | 8 | ✅ Complete |
+
 ## Cost Estimation
 
-DALL-E 3 pricing (as of 2024):
-- Standard quality 1024x1024: ~$0.04/image
+**Provider Pricing (as of 2024):**
+- **DALL-E 3:** Standard quality 1024x1024: ~$0.04/image
+- **Stability.ai:** Stable Diffusion XL: ~$0.01/image
+
+**Total Project Cost (using Stability.ai):** ~$38.03 for 3,803 images
 
 Example costs:
-- 100 spells: ~$4.00
-- 500 items: ~$20.00
+- 100 spells: ~$1.00 (Stability) or ~$4.00 (DALL-E)
+- 500 items: ~$5.00 (Stability) or ~$20.00 (DALL-E)
 
 Use `--dry-run` to preview before generating.
 

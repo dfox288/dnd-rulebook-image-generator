@@ -1,8 +1,8 @@
 # D&D Image Generator - Claude Code Context
 
 **Project Type**: Python CLI/MCP Tool
-**Status**: ✅ Production Ready
-**Last Updated**: 2025-11-22
+**Status**: ✅ Complete - 3,803 images generated
+**Last Updated**: 2025-11-23
 
 ---
 
@@ -271,13 +271,12 @@ list_generated(entity_type="spells")
 python -m src.cli --entity-type spells --limit 10
 ```
 
-**Use Case 2**: Generate all items (2,156 images, ~$86)
+**Use Case 2**: Check what's already generated
 ```bash
-# Dry run first!
+# Check coverage for any entity type
 python -m src.cli --entity-type items --dry-run
 
-# Then generate for real
-python -m src.cli --entity-type items
+# All entity types now have 100% coverage!
 ```
 
 **Use Case 3**: Regenerate failed images
@@ -307,24 +306,26 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 
 ---
 
-## 📊 Cost Estimation
+## 📊 Complete Image Compendium - Final Stats
 
-| Entity Type | Count | DALL-E 3 | Stability.ai |
-|------------|-------|----------|--------------|
-| Spells | 477 | $19.08 | $4.77 |
-| Items | 2,156 | $86.24 | $21.56 |
-| Races | 115 | $4.60 | $1.15 |
-| Classes | ~13 | $0.52 | $0.13 |
-| Backgrounds | 34 | $1.36 | $0.34 |
-| Monsters | TBD | TBD | TBD |
-| Feats | TBD | TBD | TBD |
-| Item Types | TBD | TBD | TBD |
-| Languages | TBD | TBD | TBD |
-| Sizes | TBD | TBD | TBD |
-| Spell Schools | TBD | TBD | TBD |
-| **Total (Original)** | **~2,795** | **~$111.80** | **~$27.95** |
+**Total Images Generated: 3,803**
 
-**Recommendation**: Always start with `--dry-run` and `--limit` for testing. Stability.ai is ~75% cheaper!
+| Entity Type | Images Generated | API Coverage | Cost (Stability.ai) |
+|-------------|------------------|--------------|---------------------|
+| Classes | 209 | ✅ 100% (131 in API) | $2.09 |
+| Races | 131 | ✅ 100% (67 in API) | $1.31 |
+| Spells | 477 | ✅ 100% | $4.77 |
+| Items | 2,156 | ✅ 100% | $21.56 |
+| Backgrounds | 34 | ✅ 100% | $0.34 |
+| Monsters | 598 | ✅ 100% | $5.98 |
+| Feats | 138 | ✅ 100% | $1.38 |
+| Languages | 30 | ✅ 100% | $0.30 |
+| Sizes | 6 | ✅ 100% | $0.06 |
+| Item Types | 16 | ✅ Complete | $0.16 |
+| Spell Schools | 8 | ✅ Complete | $0.08 |
+| **TOTAL** | **3,803** | **✅ 100%** | **~$38.03** |
+
+**Note**: All images generated using Stability.ai at ~$0.01/image. DALL-E 3 would have cost ~$152.12 at $0.04/image.
 
 ---
 
@@ -336,12 +337,16 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 3. Test generation: `python -m src.cli --entity-type spells --limit 3`
 4. Verify: `ls output/spells/`
 
-### Production Batch
-1. Dry run to check count: `python -m src.cli --entity-type items --dry-run`
-2. Estimate cost: count × $0.04
-3. Generate: `python -m src.cli --entity-type items`
-4. Monitor progress in terminal
-5. Check manifest for failures: `cat output/.manifest.json`
+### Current Status (Complete)
+All 11 entity types have been fully generated with 3,803 images:
+- ✅ All API entities have corresponding images
+- ✅ Multi-size conversions available (1024x1024, 512x512, 256x256)
+- ✅ Manifest tracking complete
+- ✅ Total cost: ~$38.03 using Stability.ai
+
+To regenerate or add new entities:
+1. Use `--force-regenerate` flag to recreate existing images
+2. New entities added to the API will be automatically detected
 
 ---
 
@@ -468,6 +473,6 @@ Potential improvements not currently implemented:
 
 ---
 
-**Status**: ✅ Ready for production use
-**Last Updated**: 2025-11-22
+**Status**: ✅ Complete - Full compendium of 3,803 images generated
+**Last Updated**: 2025-11-23
 **Maintainer**: See git log for contributors
