@@ -107,9 +107,11 @@ def main():
         if not slug:
             name_raw = entity.get('name', '')
             if name_raw:
-                # Simple slugification: lowercase, replace spaces/special chars with hyphens
+                # Strict slugification: only a-z, 0-9, and hyphens allowed
                 import re
-                slug = re.sub(r'[^\w\s-]', '', name_raw).strip().lower()
+                # Remove all non-alphanumeric characters except spaces and hyphens
+                slug = re.sub(r'[^a-zA-Z0-9\s-]', '', name_raw).strip().lower()
+                # Replace multiple spaces/hyphens with single hyphen
                 slug = re.sub(r'[-\s]+', '-', slug)
 
         # Validate identifier before processing
