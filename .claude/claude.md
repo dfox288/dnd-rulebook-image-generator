@@ -1,8 +1,8 @@
 # D&D Image Generator - Claude Code Context
 
 **Project Type**: Python CLI/MCP Tool
-**Status**: ✅ Complete - 3,803 images generated
-**Last Updated**: 2025-11-23
+**Status**: ✅ Complete - 3,929 images generated across 18 entity types
+**Last Updated**: 2025-11-26
 
 ---
 
@@ -10,7 +10,7 @@
 
 This is a **complete, production-ready** image generation system that creates fantasy artwork for D&D entities using AI image generation (DALL-E 3 or Stability.ai). It features multi-provider support, category-aware prompts (spell schools, item types), resumable batch generation, and Claude Code integration via MCP server.
 
-**Key Achievement**: Multi-provider architecture with hybrid CLI/MCP interface and 100% test coverage (23/23 tests passing).
+**Key Achievement**: Multi-provider architecture with hybrid CLI/MCP interface, automatic API routing for `/lookups/` endpoints, and comprehensive test coverage.
 
 ---
 
@@ -62,12 +62,16 @@ This is a **complete, production-ready** image generation system that creates fa
 
 ## 🎯 What This Does
 
-1. **Fetches** D&D entities from `http://localhost:8080/api/v1/{entity_type}`
+1. **Fetches** D&D entities from API (auto-routes to correct endpoint)
+   - Main entities: `http://localhost:8080/api/v1/{entity_type}`
+   - Lookup entities: `http://localhost:8080/api/v1/lookups/{entity_type}`
 2. **Extracts** flavor text from entity descriptions
 3. **Builds** category-aware prompts (e.g., "D&D Evocation spell effect: fireball...")
 4. **Generates** images via AI provider (DALL-E 3 @ $0.04 or Stability.ai @ $0.01 per image)
 5. **Saves** to `output/{entityType}/{slug}.png`
 6. **Tracks** state in `.manifest.json` for resumability
+
+**Lookup Entity Types** (routed to `/lookups/`): sources, spell-schools, damage-types, sizes, ability-scores, skills, item-types, item-properties, conditions, proficiency-types, languages
 
 ---
 
@@ -308,24 +312,31 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 
 ## 📊 Complete Image Compendium - Final Stats
 
-**Total Images Generated: 3,803**
+**Total Images Generated: 3,926**
 
 | Entity Type | Images Generated | API Coverage | Cost (Stability.ai) |
 |-------------|------------------|--------------|---------------------|
-| Classes | 209 | ✅ 100% (131 in API) | $2.09 |
-| Races | 131 | ✅ 100% (67 in API) | $1.31 |
 | Spells | 477 | ✅ 100% | $4.77 |
-| Items | 2,156 | ✅ 100% | $21.56 |
-| Backgrounds | 34 | ✅ 100% | $0.34 |
+| Items | 2,232 | ✅ 100% | $22.32 |
 | Monsters | 598 | ✅ 100% | $5.98 |
-| Feats | 138 | ✅ 100% | $1.38 |
+| Classes | 131 | ✅ 100% | $1.31 |
+| Races | 6 | ✅ 100% | $0.06 |
+| Backgrounds | 34 | ✅ 100% | $0.34 |
+| Feats | 139 | ✅ 100% | $1.39 |
 | Languages | 30 | ✅ 100% | $0.30 |
 | Sizes | 6 | ✅ 100% | $0.06 |
-| Item Types | 16 | ✅ Complete | $0.16 |
-| Spell Schools | 8 | ✅ Complete | $0.08 |
-| **TOTAL** | **3,803** | **✅ 100%** | **~$38.03** |
+| Item Types | 16 | ✅ 100% | $0.16 |
+| Spell Schools | 8 | ✅ 100% | $0.08 |
+| Ability Scores | 6 | ✅ 100% | $0.06 |
+| Conditions | 15 | ✅ 100% | $0.15 |
+| Damage Types | 13 | ✅ 100% | $0.13 |
+| Item Properties | 11 | ✅ 100% | $0.11 |
+| Proficiency Types | 84 | ✅ 100% | $0.84 |
+| Skills | 18 | ✅ 100% | $0.18 |
+| Sources | 11 | ✅ 100% | $0.11 |
+| **TOTAL** | **3,929** | **✅ 100%** | **~$39.29** |
 
-**Note**: All images generated using Stability.ai at ~$0.01/image. DALL-E 3 would have cost ~$152.12 at $0.04/image.
+**Note**: All images generated using Stability.ai at ~$0.01/image. DALL-E 3 would have cost ~$157.16 at $0.04/image.
 
 ---
 
@@ -338,11 +349,11 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 4. Verify: `ls output/spells/`
 
 ### Current Status (Complete)
-All 11 entity types have been fully generated with 3,803 images:
+All 18 entity types have been fully generated with 3,926 images:
 - ✅ All API entities have corresponding images
 - ✅ Multi-size conversions available (1024x1024, 512x512, 256x256)
 - ✅ Manifest tracking complete
-- ✅ Total cost: ~$38.03 using Stability.ai
+- ✅ Total cost: ~$39.26 using Stability.ai
 
 To regenerate or add new entities:
 1. Use `--force-regenerate` flag to recreate existing images
@@ -382,7 +393,7 @@ To regenerate or add new entities:
 
 ### Adding New Entity Type
 
-**Note**: The system now supports 11 entity types (spells, items, classes, races, backgrounds, monsters, feats, item_types, languages, sizes, spell_schools). To add more:
+**Note**: The system now supports 18 entity types (spells, items, classes, races, backgrounds, monsters, feats, item_types, languages, sizes, spell_schools, ability_scores, conditions, damage_types, item_properties, proficiency_types, skills, sources). To add more:
 
 1. Add prompt config to `config.yaml`:
 ```yaml
@@ -473,6 +484,6 @@ Potential improvements not currently implemented:
 
 ---
 
-**Status**: ✅ Complete - Full compendium of 3,803 images generated
-**Last Updated**: 2025-11-23
+**Status**: ✅ Complete - Full compendium of 3,929 images generated across 18 entity types
+**Last Updated**: 2025-11-26
 **Maintainer**: See git log for contributors

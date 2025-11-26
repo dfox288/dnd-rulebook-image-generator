@@ -4,6 +4,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Entity types that live under /lookups/ prefix in the API
+LOOKUP_ENTITY_TYPES = {
+    'sources',
+    'spell-schools',
+    'damage-types',
+    'sizes',
+    'ability-scores',
+    'skills',
+    'item-types',
+    'item-properties',
+    'conditions',
+    'proficiency-types',
+    'languages',
+}
+
 
 class DndApiClient:
     """Client for fetching data from D&D Compendium API"""
@@ -37,8 +52,11 @@ class DndApiClient:
             if limit and fetched >= limit:
                 break
 
-            # Fetch page
-            url = f"{self.base_url}/{entity_type}"
+            # Fetch page - use /lookups/ prefix for lookup entity types
+            if entity_type in LOOKUP_ENTITY_TYPES:
+                url = f"{self.base_url}/lookups/{entity_type}"
+            else:
+                url = f"{self.base_url}/{entity_type}"
             params = {"page": page, "per_page": per_page}
 
             try:

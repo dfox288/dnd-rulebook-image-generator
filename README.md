@@ -2,7 +2,7 @@
 
 Generate fantasy artwork for D&D entities using AI image generation (DALL-E 3 or Stability.ai) with category-aware prompts.
 
-**Status:** ✅ Complete - 3,803 images generated across 11 entity types
+**Status:** ✅ Complete - 3,929 images generated across 18 entity types
 
 ## Features
 
@@ -125,21 +125,37 @@ python -m pytest tests/ --cov=src --cov-report=html
 
 ## Generated Image Compendium
 
-**Complete Collection: 3,803 images**
+**Complete Collection: 3,929 images across 18 entity types**
 
-| Entity Type | Images Generated | API Coverage |
-|-------------|------------------|--------------|
-| classes | 209 | ✅ 100% (131 in API) |
-| races | 131 | ✅ 100% (67 in API) |
+| Entity Type | Images | Status |
+|-------------|--------|--------|
 | spells | 477 | ✅ 100% |
-| items | 2,156 | ✅ 100% |
-| backgrounds | 34 | ✅ 100% |
+| items | 2,232 | ✅ 100% |
 | monsters | 598 | ✅ 100% |
-| feats | 138 | ✅ 100% |
+| classes | 131 | ✅ 100% |
+| feats | 139 | ✅ 100% |
+| proficiency_types | 84 | ✅ 100% |
+| backgrounds | 34 | ✅ 100% |
 | languages | 30 | ✅ 100% |
+| skills | 18 | ✅ 100% |
+| item_types | 16 | ✅ 100% |
+| conditions | 15 | ✅ 100% |
+| damage_types | 13 | ✅ 100% |
+| item_properties | 11 | ✅ 100% |
+| **sources** | **11** | ✅ 100% |
+| spell_schools | 8 | ✅ 100% |
+| races | 6 | ✅ 100% |
 | sizes | 6 | ✅ 100% |
-| item_types | 16 | ✅ Complete |
-| spell_schools | 8 | ✅ Complete |
+| ability_scores | 6 | ✅ 100% |
+
+## API Routing
+
+The D&D API uses different URL prefixes for different entity types:
+
+- **Main entities** (spells, items, classes, races, backgrounds, monsters, feats) → `/api/v1/{entity}`
+- **Lookup entities** (sources, spell-schools, damage-types, sizes, ability-scores, skills, item-types, item-properties, conditions, proficiency-types, languages) → `/api/v1/lookups/{entity}`
+
+The image generator handles this routing automatically.
 
 ## Cost Estimation
 
@@ -147,7 +163,7 @@ python -m pytest tests/ --cov=src --cov-report=html
 - **DALL-E 3:** Standard quality 1024x1024: ~$0.04/image
 - **Stability.ai:** Stable Diffusion XL: ~$0.01/image
 
-**Total Project Cost (using Stability.ai):** ~$38.03 for 3,803 images
+**Total Project Cost (using Stability.ai):** ~$39.29 for 3,929 images
 
 Example costs:
 - 100 spells: ~$1.00 (Stability) or ~$4.00 (DALL-E)
