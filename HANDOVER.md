@@ -248,6 +248,7 @@ pytest tests/test_config.py -v
 - 1024×1024 (main images)
 - 512×512 (medium conversions)
 - 256×256 (small conversions)
+- 128×128 (thumbnail conversions)
 
 ---
 
@@ -466,10 +467,11 @@ image_generation:
 ## 📦 Deliverables
 
 ### Generated Assets
-- **3,926 main images** (1024×1024 PNG)
-- **3,926 medium images** (512×512 PNG)
-- **3,926 small images** (256×256 PNG)
-- **Total files**: 11,778 PNG files
+- **4,057 main images** (1024×1024 PNG)
+- **4,057 medium images** (512×512 PNG)
+- **4,057 small images** (256×256 PNG)
+- **4,057 thumbnail images** (128×128 PNG)
+- **Total files**: 16,228 PNG files
 
 ### Metadata
 - **Complete manifest** (`.manifest.json` with all metadata)
@@ -484,6 +486,12 @@ image_generation:
 ---
 
 ## 📝 Recent Updates (2025-11-26)
+
+### Added 128px Thumbnail Size
+- Added 128×128 size to conversion pipeline in `config.yaml`
+- Created batch converter script: `scripts/batch_convert_128.py`
+- Converted all 4,057 existing images to 128×128
+- Location: `output/conversions/128/{entity_type}/{provider}/{slug}.png`
 
 ### API Migration to /lookups/ Prefix
 The D&D API now uses `/lookups/` prefix for reference data endpoints:

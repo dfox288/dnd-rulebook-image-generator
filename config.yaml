@@ -34,7 +34,7 @@ output:
   base_path: "./output"
   conversions:
     enabled: true
-    sizes: [512, 256]
+    sizes: [512, 256, 128]
     path: "./output/conversions"
 
 prompts:
