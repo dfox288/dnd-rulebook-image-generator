@@ -1,8 +1,8 @@
 # D&D Image Generator - Claude Code Context
 
 **Project Type**: Python CLI/MCP Tool
-**Status**: ✅ Complete - 3,929 images generated across 18 entity types
-**Last Updated**: 2025-11-26
+**Status**: ✅ Complete - 4,543 images generated across 18 entity types
+**Last Updated**: 2025-11-30
 
 ---
 
@@ -312,17 +312,17 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 
 ## 📊 Complete Image Compendium - Final Stats
 
-**Total Images Generated: 3,926**
+**Total Images Generated: 4,543**
 
 | Entity Type | Images Generated | API Coverage | Cost (Stability.ai) |
 |-------------|------------------|--------------|---------------------|
-| Spells | 477 | ✅ 100% | $4.77 |
-| Items | 2,232 | ✅ 100% | $22.32 |
-| Monsters | 598 | ✅ 100% | $5.98 |
-| Classes | 131 | ✅ 100% | $1.31 |
-| Races | 6 | ✅ 100% | $0.06 |
-| Backgrounds | 34 | ✅ 100% | $0.34 |
-| Feats | 139 | ✅ 100% | $1.39 |
+| Spells | 484 | ✅ 100% | $4.84 |
+| Items | 2,508 | ✅ 100% | $25.08 |
+| Monsters | 848 | ✅ 100% | $8.48 |
+| Classes | 130 | ✅ 100% | $1.30 |
+| Races | 114 | ✅ 100% | $1.14 |
+| Backgrounds | 36 | ✅ 100% | $0.36 |
+| Feats | 159 | ✅ 100% | $1.59 |
 | Languages | 30 | ✅ 100% | $0.30 |
 | Sizes | 6 | ✅ 100% | $0.06 |
 | Item Types | 16 | ✅ 100% | $0.16 |
@@ -334,9 +334,9 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 | Proficiency Types | 84 | ✅ 100% | $0.84 |
 | Skills | 18 | ✅ 100% | $0.18 |
 | Sources | 11 | ✅ 100% | $0.11 |
-| **TOTAL** | **3,929** | **✅ 100%** | **~$39.29** |
+| **TOTAL** | **4,543** | **✅ 100%** | **~$45.43** |
 
-**Note**: All images generated using Stability.ai at ~$0.01/image. DALL-E 3 would have cost ~$157.16 at $0.04/image.
+**Note**: All images generated using Stability.ai at ~$0.01/image. DALL-E 3 would have cost ~$181.72 at $0.04/image.
 
 ---
 
@@ -349,11 +349,11 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 4. Verify: `ls output/spells/`
 
 ### Current Status (Complete)
-All 18 entity types have been fully generated with 3,926 images:
+All 18 entity types have been fully generated with 4,543 images:
 - ✅ All API entities have corresponding images
-- ✅ Multi-size conversions available (1024x1024, 512x512, 256x256)
+- ✅ Multi-size conversions available (1024x1024, 512x512, 256x256, 128x128)
 - ✅ Manifest tracking complete
-- ✅ Total cost: ~$39.26 using Stability.ai
+- ✅ Total cost: ~$45.43 using Stability.ai
 
 To regenerate or add new entities:
 1. Use `--force-regenerate` flag to recreate existing images
@@ -484,6 +484,6 @@ Potential improvements not currently implemented:
 
 ---
 
-**Status**: ✅ Complete - Full compendium of 3,929 images generated across 18 entity types
-**Last Updated**: 2025-11-26
+**Status**: ✅ Complete - Full compendium of 4,543 images generated across 18 entity types
+**Last Updated**: 2025-11-30
 **Maintainer**: See git log for contributors
