@@ -2,7 +2,7 @@
 
 Generate fantasy artwork for D&D entities using AI image generation (DALL-E 3 or Stability.ai) with category-aware prompts.
 
-**Status:** ✅ Complete - 3,929 images generated across 18 entity types
+**Status:** ✅ Complete - 4,508 images generated across 18 entity types
 
 ## Features
 
@@ -10,10 +10,10 @@ Generate fantasy artwork for D&D entities using AI image generation (DALL-E 3 or
 - 🤖 Multi-provider support (DALL-E 3, Stability.ai)
 - 📦 Batch generation with resumable state
 - 🔧 MCP integration for Claude Code
-- 💾 Organized output structure (`output/{entityType}/{slug}.png`)
+- 💾 Source-prefixed filenames (`output/{entityType}/stability-ai/{source}--{slug}.png`)
 - 🔄 Retry logic and rate limiting
 - 📊 Manifest tracking of generated images
-- 🖼️ Multiple size conversions (1024x1024, 512x512, 256x256)
+- 🖼️ Multiple size conversions in WebP format (512px, 256px, 128px) - 90% smaller than PNG
 
 ## Setup
 
@@ -99,16 +99,29 @@ prompts:
 ```
 output/
 ├── spells/
-│   ├── fireball.png
-│   └── magic-missile.png
+│   └── stability-ai/
+│       ├── phb--fireball.png
+│       └── phb--magic-missile.png
 ├── items/
-│   ├── longsword.png
-│   └── potion-of-healing.png
-├── classes/
-├── races/
-├── backgrounds/
+│   └── stability-ai/
+│       ├── phb--longsword.png
+│       └── dmg--potion-of-healing.png
+├── conversions/
+│   ├── 128/
+│   │   └── spells/stability-ai/*.webp
+│   ├── 256/
+│   │   └── spells/stability-ai/*.webp
+│   └── 512/
+│       └── spells/stability-ai/*.webp
 └── .manifest.json  # Tracks generation status
 ```
+
+**Filename Convention**: Files use source-prefixed naming to match API slugs:
+- API slug `phb:fireball` → Filename `phb--fireball.png`
+- API slug `xge:absorb-elements` → Filename `xge--absorb-elements.png`
+- Colons converted to `--` for macOS compatibility
+
+**Note**: Original images are stored as PNG (1024x1024). Conversions are WebP for ~90% file size savings.
 
 ## Testing
 
@@ -125,28 +138,37 @@ python -m pytest tests/ --cov=src --cov-report=html
 
 ## Generated Image Compendium
 
-**Complete Collection: 3,929 images across 18 entity types**
+**Complete Collection: 4,508 images across 18 entity types**
 
 | Entity Type | Images | Status |
 |-------------|--------|--------|
-| spells | 477 | ✅ 100% |
-| items | 2,232 | ✅ 100% |
-| monsters | 598 | ✅ 100% |
-| classes | 131 | ✅ 100% |
-| feats | 139 | ✅ 100% |
-| proficiency_types | 84 | ✅ 100% |
-| backgrounds | 34 | ✅ 100% |
+| spells | 488 | ✅ 100% |
+| items | 2,508 | ✅ 100% |
+| monsters | 848 | ✅ 100% |
+| classes | 133 | ✅ 100% |
+| races | 117 | ✅ 100% |
+| feats | 159 | ✅ 100% |
+| proficiency_types | 85 | ✅ 100% |
+| backgrounds | 36 | ✅ 100% |
 | languages | 30 | ✅ 100% |
 | skills | 18 | ✅ 100% |
 | item_types | 16 | ✅ 100% |
 | conditions | 15 | ✅ 100% |
 | damage_types | 13 | ✅ 100% |
 | item_properties | 11 | ✅ 100% |
-| **sources** | **11** | ✅ 100% |
+| sources | 11 | ✅ 100% |
 | spell_schools | 8 | ✅ 100% |
-| races | 6 | ✅ 100% |
 | sizes | 6 | ✅ 100% |
 | ability_scores | 6 | ✅ 100% |
+
+### WebP Conversion Stats
+
+| Size | PNG | WebP | Savings |
+|------|-----|------|---------|
+| 128px | 123 MB | 18.5 MB | 85% |
+| 256px | 420 MB | 51.4 MB | 88% |
+| 512px | 1.4 GB | 134.5 MB | 91% |
+| **Total** | **2.0 GB** | **204 MB** | **90%** |
 
 ## API Routing
 
@@ -163,7 +185,7 @@ The image generator handles this routing automatically.
 - **DALL-E 3:** Standard quality 1024x1024: ~$0.04/image
 - **Stability.ai:** Stable Diffusion XL: ~$0.01/image
 
-**Total Project Cost (using Stability.ai):** ~$39.29 for 3,929 images
+**Total Project Cost (using Stability.ai):** ~$45.08 for 4,508 images
 
 Example costs:
 - 100 spells: ~$1.00 (Stability) or ~$4.00 (DALL-E)

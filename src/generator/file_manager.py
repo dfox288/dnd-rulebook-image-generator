@@ -78,8 +78,10 @@ class FileManager:
             image_data = response.content
 
         # Sanitize slug to prevent path traversal
-        sanitized_slug = Path(slug).name
-        if sanitized_slug != slug:
+        # Also convert : to -- for filesystem compatibility (macOS issues with colons)
+        sanitized_slug = slug.replace(':', '--')
+        sanitized_slug = Path(sanitized_slug).name
+        if sanitized_slug != slug.replace(':', '--'):
             raise ValueError(f"Invalid slug: {slug}. Slugs must not contain path components.")
 
         # Clean filename: just slug.png
@@ -100,7 +102,7 @@ class FileManager:
 
     def _generate_conversions(self, image_data: bytes, entity_type: str, slug: str, provider_name: str = "unknown"):
         """
-        Generate resized conversions of the image
+        Generate resized WebP conversions of the image
 
         Args:
             image_data: Original image data
@@ -118,12 +120,12 @@ class FileManager:
             # Resize image
             resized_img = img.resize((size, size), Image.Resampling.LANCZOS)
 
-            # Save to conversion directory with clean filename
-            filename = f"{slug}.png"
+            # Save as WebP for ~90% file size reduction
+            filename = f"{slug}.webp"
             conversion_path = provider_dir / filename
-            resized_img.save(conversion_path, format='PNG')
+            resized_img.save(conversion_path, format='WEBP', quality=85)
 
-            logger.info(f"Generated {size}x{size} conversion: {conversion_path}")
+            logger.info(f"Generated {size}x{size} WebP conversion: {conversion_path}")
 
     def _resize_image(self, image_data: bytes, target_size: int) -> bytes:
         """Resize image to target_size x target_size"""
@@ -165,14 +167,22 @@ class FileManager:
 
         self._save_manifest(manifest)
 
-    def is_already_generated(self, entity_type: str, slug: str) -> bool:
-        """Check if image already exists in manifest"""
+    def is_already_generated(self, entity_type: str, slug: str, provider_name: str = "stability-ai") -> bool:
+        """Check if image already exists (checks both manifest and file on disk)"""
+        # First check manifest (for backwards compatibility)
         manifest = self._load_manifest()
-        return (
+        if (
             entity_type in manifest
             and slug in manifest[entity_type]
             and manifest[entity_type][slug]["success"]
-        )
+        ):
+            return True
+
+        # Also check if file exists on disk (handles renamed files)
+        # Convert slug for filesystem (: -> --)
+        fs_slug = slug.replace(':', '--')
+        file_path = self.base_path / entity_type / provider_name / f"{fs_slug}.png"
+        return file_path.exists()
 
     def get_generated_count(self, entity_type: Optional[str] = None) -> int:
         """

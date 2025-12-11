@@ -1,8 +1,8 @@
 # D&D Image Generator - Claude Code Context
 
 **Project Type**: Python CLI/MCP Tool
-**Status**: ✅ Complete - 4,543 images generated across 18 entity types
-**Last Updated**: 2025-11-30
+**Status**: ✅ Complete - 4,508 images generated across 18 entity types
+**Last Updated**: 2025-12-11
 
 ---
 
@@ -68,7 +68,9 @@ This is a **complete, production-ready** image generation system that creates fa
 2. **Extracts** flavor text from entity descriptions
 3. **Builds** category-aware prompts (e.g., "D&D Evocation spell effect: fireball...")
 4. **Generates** images via AI provider (DALL-E 3 @ $0.04 or Stability.ai @ $0.01 per image)
-5. **Saves** to `output/{entityType}/{slug}.png`
+5. **Saves** to `output/{entityType}/stability-ai/{source}--{slug}.png`
+   - Filenames use `--` separator (e.g., `phb--fireball.png`, `xge--absorb-elements.png`)
+   - Colons from API slugs converted to `--` for macOS compatibility
 6. **Tracks** state in `.manifest.json` for resumability
 
 **Lookup Entity Types** (routed to `/lookups/`): sources, spell-schools, damage-types, sizes, ability-scores, skills, item-types, item-properties, conditions, proficiency-types, languages
@@ -312,15 +314,15 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 
 ## 📊 Complete Image Compendium - Final Stats
 
-**Total Images Generated: 4,543**
+**Total Images Generated: 4,508** (with source-prefixed filenames)
 
 | Entity Type | Images Generated | API Coverage | Cost (Stability.ai) |
 |-------------|------------------|--------------|---------------------|
-| Spells | 484 | ✅ 100% | $4.84 |
+| Spells | 488 | ✅ 100% | $4.88 |
 | Items | 2,508 | ✅ 100% | $25.08 |
 | Monsters | 848 | ✅ 100% | $8.48 |
-| Classes | 130 | ✅ 100% | $1.30 |
-| Races | 114 | ✅ 100% | $1.14 |
+| Classes | 133 | ✅ 100% | $1.33 |
+| Races | 117 | ✅ 100% | $1.17 |
 | Backgrounds | 36 | ✅ 100% | $0.36 |
 | Feats | 159 | ✅ 100% | $1.59 |
 | Languages | 30 | ✅ 100% | $0.30 |
@@ -331,12 +333,32 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 | Conditions | 15 | ✅ 100% | $0.15 |
 | Damage Types | 13 | ✅ 100% | $0.13 |
 | Item Properties | 11 | ✅ 100% | $0.11 |
-| Proficiency Types | 84 | ✅ 100% | $0.84 |
+| Proficiency Types | 85 | ✅ 100% | $0.85 |
 | Skills | 18 | ✅ 100% | $0.18 |
 | Sources | 11 | ✅ 100% | $0.11 |
-| **TOTAL** | **4,543** | **✅ 100%** | **~$45.43** |
+| **TOTAL** | **4,508** | **✅ 100%** | **~$45.08** |
 
-**Note**: All images generated using Stability.ai at ~$0.01/image. DALL-E 3 would have cost ~$181.72 at $0.04/image.
+**Note**: All images generated using Stability.ai at ~$0.01/image. DALL-E 3 would have cost ~$180.32 at $0.04/image.
+
+### Filename Convention
+
+All files now use source-prefixed naming to match API slugs:
+- API slug: `phb:fireball` → Filename: `phb--fireball.png`
+- API slug: `xge:absorb-elements` → Filename: `xge--absorb-elements.png`
+- API slug: `core:common` → Filename: `core--common.png` (lookup entities)
+
+Source prefixes indicate the rulebook: `phb` (Player's Handbook), `xge` (Xanathar's Guide), `tce` (Tasha's Cauldron), `ftod` (Fizban's Treasury), `dmg` (Dungeon Master's Guide), `vgm` (Volo's Guide), `core` (core rules), etc.
+
+### WebP Conversions
+
+All conversion sizes are now stored as WebP format for ~90% file size reduction:
+
+| Size | PNG | WebP | Savings |
+|------|-----|------|---------|
+| 128px | 123.0 MB | 18.5 MB | **85.0%** |
+| 256px | 420.5 MB | 51.4 MB | **87.8%** |
+| 512px | 1.4 GB | 134.5 MB | **90.8%** |
+| **TOTAL** | **2.0 GB** | **204.4 MB** | **89.8%** |
 
 ---
 
@@ -349,11 +371,13 @@ python -m src.cli --entity-type spells --slug failed-spell --force-regenerate
 4. Verify: `ls output/spells/`
 
 ### Current Status (Complete)
-All 18 entity types have been fully generated with 4,543 images:
+All 18 entity types have been fully generated with 4,508 images:
 - ✅ All API entities have corresponding images
-- ✅ Multi-size conversions available (1024x1024, 512x512, 256x256, 128x128)
+- ✅ Source-prefixed filenames (e.g., `phb--fireball.png`)
+- ✅ Original images stored as PNG (1024x1024)
+- ✅ Multi-size WebP conversions (512px, 256px, 128px) - 90% smaller than PNG
 - ✅ Manifest tracking complete
-- ✅ Total cost: ~$45.43 using Stability.ai
+- ✅ Total cost: ~$45.08 using Stability.ai
 
 To regenerate or add new entities:
 1. Use `--force-regenerate` flag to recreate existing images
@@ -479,11 +503,11 @@ Potential improvements not currently implemented:
 
 **Config File**: `config.yaml`
 **Env File**: `.env` (create from `.env.example`)
-**Output Dir**: `output/{entity_type}/{slug}.png`
+**Output Dir**: `output/{entity_type}/stability-ai/{source}--{slug}.png`
 **Manifest**: `output/.manifest.json`
 
 ---
 
-**Status**: ✅ Complete - Full compendium of 4,543 images generated across 18 entity types
-**Last Updated**: 2025-11-30
+**Status**: ✅ Complete - Full compendium of 4,508 images generated across 18 entity types
+**Last Updated**: 2025-12-11
 **Maintainer**: See git log for contributors
