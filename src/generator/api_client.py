@@ -17,6 +17,7 @@ LOOKUP_ENTITY_TYPES = {
     'conditions',
     'proficiency-types',
     'languages',
+    'creature-types',
 }
 
 

@@ -261,6 +261,19 @@ prompts:
       Final illustration only.
       Rendered in the Emberstroke portrait style.
 
+  creature_types:
+    entity_prefix: "the creature type:"
+    include_category: false
+    template: |
+      A stylized painterly portrait representing the creature type: {entity_prefix} {entity}. {entityDescription}
+      Symbolic representation of the creature category showing characteristic features rendered with painterly brushstrokes.
+      Warm directional lighting from the upper left, evocative of the creature type's nature.
+      Centered composition against a painterly abstract background with sweeping brush-strokes.
+      Smooth painterly blending, minimal linework, mysterious and fantastical.
+      No specific creatures, no text, no UI, no multiple figures.
+      Final illustration only.
+      Rendered in the Emberstroke portrait style.
+
 generation:
   max_retries: 3
   retry_delay: 5
